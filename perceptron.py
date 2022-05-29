@@ -1,36 +1,15 @@
-
-
-# Test Date
-
-# weights = [-0.5, 0, 0.5, 0, -0.5] 
-# example = [[True,  [1,1,1,1,0]], 
-#                        [False, [1,1,1,1,1]], 
-#                        [False, [0,0,0,0,0]], 
-#                      [False, [0,0,1,1,0]], 
-#                        [False, [1,0,1,0,1]], 
-#                        [False, [1,0,1,0,0]], 
-#                        [False, [0,1,0,1,1]], 
-#                        [False, [0,1,0,1,0]], 
-#                       [False, [0,0,1,0,0]], 
-#                        [False, [0,0,0,1,0]]]
-
-# weights = [0.3, -0.6] 
-# example =  [[True, [1,1]], 
-#                      [False, [0,0]], 
-#                      [True, [0,1]], 
-#                      [True, [1,0]]] 
-
-
-
-
 def perceptron(threshold, ajustmentFactor,weights,examples,passNum):
     weightlenth = len(weights)
     exampleslenth = len(examples)
+    initialweights = weights
+    result = {'init': {'weights': initialweights, 'threshold': threshold, 'adjustment': ajustmentFactor}}
 
     for i in range(passNum):
-        print("\nPass ", i+1, "\n")
-        for j in range(exampleslenth):  
-            print("inputs: ",examples[j][1] )  # print each input array 
+        result[i+1] = []
+        for j in range(exampleslenth):
+            dic = {} 
+
+            dic['inputs'] = examples[j][1]
             Sum = 0
             for num1,num2 in zip(weights,examples[j][1]): # for each input array
                 Sum += num1*num2                         #calculate their Sum
@@ -40,22 +19,25 @@ def perceptron(threshold, ajustmentFactor,weights,examples,passNum):
                 prediction = False
             else:
                 prediction = True
-            print("prediction: ", prediction, "  answer: ", examples[j][0])
+
+            dic['prediction'] = prediction
+            dic['answer'] = examples[j][0]
 
             if(examples[j][0] != prediction):
+                new_weights = weights[:]
                 if (examples[j][0]):
                     for k in range(weightlenth):
                         if (examples[j][1][k]):
-                            weights[k] += ajustmentFactor
-                   
+                            new_weights[k] += ajustmentFactor                  
                 else:
                     for a in range(weightlenth):
                         if (examples[j][1][a]):
-                            weights[a] -= ajustmentFactor
+                            new_weights[a] -= ajustmentFactor
+                 
+            dic['adjusted_weights'] = new_weights
             
-            print("adjusted_weights: ", weights)
+            result[i+1].append(dic)
+            weights = new_weights[:]
+        
 
-
-
-
-# perceptron(0.4, 0.09,weights,example,10)
+    return result    
